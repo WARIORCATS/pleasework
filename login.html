@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Log In and Sign Up</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            margin: 0;
+            background-color: #f4f4f9;
+        }
+        .container {
+            width: 300px;
+            padding: 20px;
+            background: white;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            border-radius: 8px;
+        }
+        header {
+            width: 100%;
+            position: absolute;
+            top: 0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 20px;
+            background-color: #007BFF;
+            color: white;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+        }
+        header .profile {
+            display: flex;
+            align-items: center;
+        }
+        header img {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            margin-right: 10px;
+        }
+        h2 {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        .form-group {
+            margin-bottom: 15px;
+        }
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+        input {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+        a.button {
+            display: block;
+            text-align: center;
+            padding: 10px;
+            background-color: #007BFF;
+            color: white;
+            font-size: 16px;
+            border-radius: 4px;
+            text-decoration: none;
+            margin-top: 10px;
+            pointer-events: none;
+            opacity: 0.5;
+        }
+        a.button.enabled {
+            pointer-events: auto;
+            opacity: 1;
+        }
+        .switch {
+            margin-top: 10px;
+            text-align: center;
+        }
+        .switch a {
+            color: #007BFF;
+            text-decoration: none;
+        }
+        .switch a:hover {
+            text-decoration: underline;
+        }
+        .error {
+            color: red;
+            font-size: 14px;
+            text-align: center;
+            margin-top: 10px;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container" id="login-container">
+    <h2>Log In</h2>
+    <form onsubmit="handleLogin(event)">
+        <div class="form-group">
+            <label for="login-email">Email:</label>
+            <input type="email" id="login-email" name="email" required>
+        </div>
+        <div class="form-group">
+            <label for="login-password">Password:</label>
+            <input type="password" id="login-password" name="password" required>
+        </div>
+        <a href="base.html" id="login-button" class="button enabled" onclick="handleLogin(event)">Log In</a>
+        <div id="login-error" class="error"></div>
+    </form>
+    <div class="switch">
+        <p>Don't have an account? <a href="#" onclick="showSignUp()">Sign Up</a></p>
+    </div>
+</div>
+
+<div class="container" id="signup-container" style="display: none;">
+    <h2>Sign Up</h2>
+    <form onsubmit="handleSignUp(event)">
+        <div class="form-group">
+            <label for="signup-name">Name:</label>
+            <input type="text" id="signup-name" name="name" required>
+        </div>
+        <div class="form-group">
+            <label for="signup-email">Email:</label>
+            <input type="email" id="signup-email" name="email" required>
+        </div>
+        <div class="form-group">
+            <label for="signup-password">Password:</label>
+            <input type="password" id="signup-password" name="password" required>
+        </div>
+        <a href="base.html" id="signup-button" class="button enabled" onclick="handleSignUp(event)">Sign Up</a>
+        <div id="signup-error" class="error"></div>
+    </form>
+    <div class="switch">
+        <p>Already have an account? <a href="#" onclick="showLogIn()">Log In</a></p>
+    </div>
+</div>
+
+<script>
+    // Load accounts from localStorage or initialize as empty object
+    const accounts = JSON.parse(localStorage.getItem('accounts')) || {};
+
+    function showSignUp() {
+        document.getElementById('login-container').style.display = 'none';
+        document.getElementById('signup-container').style.display = 'block';
+        clearErrors();
+    }
+
+    function showLogIn() {
+        document.getElementById('signup-container').style.display = 'none';
+        document.getElementById('login-container').style.display = 'block';
+        clearErrors();
+    }
+
+    function clearErrors() {
+        document.getElementById('login-error').textContent = '';
+        document.getElementById('signup-error').textContent = '';
+    }
+
+    function handleSignUp(event) {
+        event.preventDefault();
+        const email = document.getElementById('signup-email').value.trim();
+        const password = document.getElementById('signup-password').value.trim();
+        const name = document.getElementById('signup-name').value.trim();
+
+        if (accounts[email]) {
+            document.getElementById('signup-error').textContent = 'Account already exists.';
+            return;
+        }
+
+        accounts[email] = { name, password };
+        localStorage.setItem('accounts', JSON.stringify(accounts)); // Save accounts to localStorage
+        alert('Sign-up successful! You can now log in.');
+        showLogIn();
+    }
+
+    function handleLogin(event) {
+        event.preventDefault();
+        const email = document.getElementById('login-email').value.trim();
+        const password = document.getElementById('login-password').value.trim();
+
+        if (!accounts[email]) {
+            document.getElementById('login-error').textContent = 'Account not found.';
+            return;
+        }
+
+        if (accounts[email].password !== password) {
+            document.getElementById('login-error').textContent = 'Incorrect password.';
+            return;
+        }
+
+        // Store logged-in user information
+        localStorage.setItem('loggedIn', email);
+        alert(`Login successful! Welcome, ${accounts[email].name}!`);
+        window.location.href = 'base.html';
+    }
+</script>
+
+</body>
+</html>
+

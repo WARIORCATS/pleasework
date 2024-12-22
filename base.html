@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Home Page</title>
+    <link rel="stylesheet" href="base.css">
+    <script>
+        // Check if user is logged in
+        function checkLogin() {
+            const loggedIn = localStorage.getItem('loggedIn');
+            if (!loggedIn) {
+                window.location.href = 'login.html'; // Redirect to login page if not logged in
+            }
+        }
+
+        // Call this function on pages that require login
+        checkLogin();
+    </script>
+</head>
+<body>
+    <a href="anchor.html">Activity Hub</a>
+    <a href="quietplace.html">Have Peace</a>
+    <a href="party!.html">PARTY TIME!</a>
+    <a href="ideas.html">Ideas for when you are bored</a>
+    <a href="index.html">Our AI!</a>
+    <a href="login.html" onclick="logout()">Log Out</a>
+    <h1 id="head">Welcome</h1>
+    <p id="Pg">In this website, you will be able to hang-out with your friends</p>
+
+    <script>
+        function logout() {
+            localStorage.removeItem('loggedIn');
+            window.location.href = 'login.html'; // Redirect to login page
+        }
+    </script>
+</body>
+</html>
